@@ -1,0 +1,23 @@
+{
+  "runtime": "Net60",
+  "documentGenerator": {
+    "fromDocument": {
+      "url": "http://localhost:3001/swagger-json",
+      "output": null
+    }
+  },
+  "codeGenerators": {
+    "openApiToTypeScriptClient": {
+     "typescriptVersion": 4.4,
+      "typeStyle": "Interface",
+      "generateClientInterfaces": true,
+      "template": "Axios",
+      "output": "../src/user/generated/user-client.ts",
+      "serviceHost": "http://localhost:3000",
+      "extensionCode": "client.ts",
+      "clientBaseClass": "ClientBase",
+      "useTransformOptionsMethod": true,
+      "useTransformResultMethod": true
+    }
+  }
+}
