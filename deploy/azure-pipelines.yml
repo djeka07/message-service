@@ -33,7 +33,7 @@ variables:
   - name: imageRepository
     value: "$(appName)"
   - name: tag
-    value: "$(Build.BuildId)"
+    value: "$(appMajorMinorVersion).$(Build.BuildId)-$(Build.BuildNumber)"
 
 stages:
   - stage: CreateTag
@@ -89,8 +89,8 @@ stages:
           dockerfile: $(dockerfilePath)
           containerRegistry: $(dockerRegistryServiceConnection)
           tags: |
-            $(appMajorMinorVersion).$(Build.BuildId)-$(Build.BuildNumber)
-          arguments: '--build-arg BUILD_ID=$(tag) --platform=linux/amd64'
+            $(tag)
+          arguments: '--build-arg BUILD_ID=$(Build.BuildId) --platform=linux/amd64'
       - task: Docker@2
         displayName: Push an image to container registry
         inputs:
@@ -98,4 +98,4 @@ stages:
           repository: $(imageRepository)
           containerRegistry: $(dockerRegistryServiceConnection)
           tags: |
-            $(appMajorMinorVersion).$(Build.BuildId)-$(Build.BuildNumber)
+            $(tag)
