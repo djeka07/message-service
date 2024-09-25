@@ -19,8 +19,8 @@ variables:
   appName: $(Build.Repository.Name)
   appNamespace: "default"
   appMajorMinorVersion: "1.0.0"
-  azureSubscription: "$(AzureSubscription)"
-  containerRegistry: "$(ContainerRegistry)"
+  azureSubscription: "$(azSubscription)"
+  containerRegistry: "$(registry)"
   dockerfilePath: $(Build.SourcesDirectory)/Dockerfile
   dockerRegistryServiceConnection: "AzureServiceRegistry"
   imageRepository: $(appName)
