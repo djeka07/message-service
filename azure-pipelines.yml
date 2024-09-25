@@ -23,9 +23,9 @@ variables:
   - name: appMajorMinorVersion
     value: "1.0.0"
   - name: azureSubscription
-    value: "$(azSubscription)"
+    value: "$(AZSUBSCRIPTION)"
   - name: containerRegistry
-    value: "$(registry)"
+    value: "$(REGISTRY)"
   - name: dockerfilePath
     value: "$(Build.SourcesDirectory)/Dockerfile"
   - name: dockerRegistryServiceConnection
@@ -77,7 +77,7 @@ stages:
         name: setExtensionUseDynamicInstall
         displayName: Set Extension Use Dynamic Install
         inputs:
-          connectedServiceNameARM: $(azureSubscription)
+          connectedServiceNameARM: PremiumAks
           scriptType: 'bash'
           scriptLocation: inlineScript
           inlineScript: 'az config set extension.use_dynamic_install=yes_without_prompt'
