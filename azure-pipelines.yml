@@ -1,0 +1,101 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  name: Macbook pool
+
+resources:
+  repositories:
+    - repository: build-templates
+      type: git
+      name: Webs/build-templates
+
+variables:
+  - name: appName
+    value: $(Build.Repository.Name)
+  - name: appNamespace
+    value: "default"
+  - name: appMajorMinorVersion
+    value: "1.0.0"
+  - name: azureSubscription
+    value: "$(AZSUBSCRIPTION)"
+  - name: containerRegistry
+    value: "$(REGISTRY)"
+  - name: dockerfilePath
+    value: "$(Build.SourcesDirectory)/Dockerfile"
+  - name: dockerRegistryServiceConnection
+    value: "AzureServiceRegistry"
+  - name: imageRepository
+    value: "$(appName)"
+  - name: tag
+    value: "$(Build.BuildId)"
+
+stages:
+  - stage: CreateTag
+    displayName: Create tag
+    jobs:
+    - job: CreateTag
+      steps:
+      - task: VariableTransformTask@2
+        inputs:
+          value: '$(Build.SourceVersion)'
+          variableName: 'Build.BuildNumber'
+          IsOutput: true
+          substring: true
+          substringType: 'left'
+          substringLength: '7'
+
+  - stage: BuildAndPushDockerImage
+    displayName: Build and push Docker image
+    dependsOn: CreateTag
+    condition: succeeded()
+    jobs:
+    - job: Build
+      displayName: Build and push
+      steps:
+      - checkout: self
+        clean: false
+        submodules: true
+      - task: Yarn@3
+        name: Install
+        displayName: Install
+        inputs:
+          arguments: 'install --frozen-lockfile'
+      - task: Yarn@3
+        name: Build
+        displayName: Build
+        env:
+          BUILD_ID: $(TAG)
+        inputs:
+          arguments: 'build'
+      - task: AzureCLI@2
+        name: setExtensionUseDynamicInstall
+        displayName: Set Extension Use Dynamic Install
+        inputs:
+          connectedServiceNameARM: $(azureSubscription)
+          scriptType: 'bash'
+          scriptLocation: inlineScript
+          inlineScript: 'az config set extension.use_dynamic_install=yes_without_prompt'
+      - task: Docker@2
+        displayName: Build a container image
+        inputs:
+          command: build
+          repository: $(imageRepository)
+          dockerfile: $(dockerfilePath)
+          containerRegistry: $(dockerRegistryServiceConnection)
+          tags: |
+            $(appMajorMinorVersion).$(Build.BuildId)-$(Build.BuildNumber)
+          arguments: '--build-arg BUILD_ID=$(tag) --platform=linux/amd64'
+      - task: Docker@2
+        displayName: Push an image to container registry
+        inputs:
+          command: push
+          repository: $(imageRepository)
+          containerRegistry: $(dockerRegistryServiceConnection)
+          tags: |
+            $(appMajorMinorVersion).$(Build.BuildId)-$(Build.BuildNumber)
