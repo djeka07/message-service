@@ -450,8 +450,8 @@ export class ConversationController {
     description: 'Update a message read status',
   })
   @ApiBadRequestResponse()
-  @ApiBody({ type: CreateMessageRequest })
-  @ApiOkResponse({ type: MessageReponse })
+  @ApiBody({ type: ReadMessagesRequest })
+  @ApiOkResponse({ type: [MessageReponse] })
   async readMessages(
     @CurrentUser('id') userId: string,
     @Param('id') id: string,
