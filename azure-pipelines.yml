@@ -77,7 +77,7 @@ stages:
         name: setExtensionUseDynamicInstall
         displayName: Set Extension Use Dynamic Install
         inputs:
-          connectedServiceNameARM: PremiumAks
+          connectedServiceNameARM: $(azureSubscription)
           scriptType: 'bash'
           scriptLocation: inlineScript
           inlineScript: 'az config set extension.use_dynamic_install=yes_without_prompt'
