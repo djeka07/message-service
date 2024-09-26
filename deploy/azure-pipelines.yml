@@ -37,6 +37,10 @@ variables:
     value: "$(appName)"
   - name: tag
     value: "$(appMajorMinorVersion).$(Build.BuildId)-$(Build.BuildNumber)"
+  - name: kubernetesServiceConnection
+    value: "$(aksServiceConnection)"
+  - name: kubernetesManifests
+    value: "$(manifests)"
 
 stages:
   - stage: CreateTag
@@ -102,3 +106,10 @@ stages:
           containerRegistry: $(dockerRegistryServiceConnection)
           tags: |
             $(tag)
+      - task: KubernetesManifest@1
+        inputs:
+          action: 'deploy'
+          connectionType: "$(kubernetesServiceConnection)"
+          kubernetesServiceConnection: 'aks-default'
+          namespace: 'default'
+          manifests: "$(kubernetesManifests)"
