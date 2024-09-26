@@ -46,7 +46,7 @@ variables:
   - name: kubernetesServiceConnection
     value: "$(kubeServiceConnection)"
   - name: kubernetesNamespace
-    value: kubeNamespace
+    value: "$(kubeNamespace)"
 
 stages:
   - stage: CreateTag
