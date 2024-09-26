@@ -108,11 +108,23 @@ stages:
           containerRegistry: $(dockerRegistryServiceConnection)
           tags: |
             $(tag)
-      - task: KubernetesManifest@1
-        inputs:
-          action: 'deploy'
-          connectionType: "$(kubernetesServiceConnection)"
-          kubernetesServiceConnection: 'aks-default'
-          namespace: 'default'
-          manifests: "$(kubernetesManifests)"
-          containers: "$(kubernetesContainers)"
+  - stage: Deploy
+    displayName: Deploy to Kubernetes
+    dependsOn: BuildAndPushDockerImage
+    condition: succeeded()
+    jobs:
+      - job: Deploy
+        displayName: Deplouy to kubernetes
+        steps:
+        - checkout: self
+        - checkout: Infrastructure
+          clean: false
+          submodules: true
+        - task: KubernetesManifest@1
+          inputs:
+            action: 'deploy'
+            connectionType: "$(kubernetesServiceConnection)"
+            kubernetesServiceConnection: 'aks-default'
+            namespace: 'default'
+            manifests: "$(kubernetesManifests)"
+            containers: "$(kubernetesContainers)"
