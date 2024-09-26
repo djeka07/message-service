@@ -83,7 +83,7 @@ stages:
         name: Build
         displayName: Build
         env:
-          BUILD_ID: $(TAG)
+          BUILD_ID: $(tag)
         inputs:
           arguments: 'build'
       - task: AzureCLI@2
@@ -124,6 +124,11 @@ stages:
         - checkout: Infrastructure
           clean: false
           submodules: true
+        - task: Bash@3
+          displayName: Set correct tag
+          inputs:
+            targetType: inline
+            script: cat $(kubernetesManifests) | sed "s/{{VERSION}}/$(tag)/g"
         - task: KubernetesManifest@1
           inputs:
             action: 'deploy'
