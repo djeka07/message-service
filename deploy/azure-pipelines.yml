@@ -41,6 +41,8 @@ variables:
     value: "$(aksServiceConnection)"
   - name: kubernetesManifests
     value: "$(manifests)"
+  - name: kubernetesContainers
+    value: "$(containers)"
 
 stages:
   - stage: CreateTag
@@ -113,3 +115,4 @@ stages:
           kubernetesServiceConnection: 'aks-default'
           namespace: 'default'
           manifests: "$(kubernetesManifests)"
+          containers: "$(kubernetesContainers)"
