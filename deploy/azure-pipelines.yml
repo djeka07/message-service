@@ -14,6 +14,9 @@ resources:
     - repository: build-templates
       type: git
       name: Webs/build-templates
+    - repository: Infrastructure
+      type: git
+      name: Webs/Infrastructure
 
 variables:
   - name: appName
