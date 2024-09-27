@@ -74,6 +74,7 @@ stages:
       - checkout: self
         clean: false
         submodules: true
+      - task: printAllVariables@1
       - task: Yarn@3
         name: Install
         displayName: Install
