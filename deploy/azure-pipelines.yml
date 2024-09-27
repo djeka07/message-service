@@ -20,7 +20,7 @@ resources:
 
 variables:
   - name: appName
-    value: $(Build.Repository.Name)
+    value: $(Build.DefinitionName)
   - name: appNamespace
     value: "default"
   - name: appMajorMinorVersion
