@@ -8,8 +8,12 @@ WORKDIR /usr/src/app
 
 COPY --chown=node:node package*.json ./
 COPY --chown=node:node yarn.lock ./
+COPY --chown=node:node .yarnrc.yml ./
+COPY --chown=node:node .yarn ./.yarn
 
-RUN yarn install --frozen-lockfile
+RUN corepack enable
+
+RUN yarn install --immutable
 
 COPY --chown=node:node . .
 
@@ -24,16 +28,21 @@ FROM node:22-alpine AS build
 WORKDIR /usr/src/app
 
 COPY --chown=node:node package*.json ./
+COPY --chown=node:node yarn.lock ./
+COPY --chown=node:node .yarnrc.yml ./
+COPY --chown=node:node .yarn ./.yarn
 
 COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
 
 COPY --chown=node:node . .
 
-RUN npm run build
+RUN corepack enable
+
+RUN yarn build
 
 ENV NODE_ENV=production
 
-RUN yarn install --frozen-lockfile  --production && yarn cache clean --force
+RUN yarn workspaces focus && yarn cache clean --all
 
 USER node
 
